@@ -8,10 +8,10 @@ from torch.nn import Linear, Sequential
 
 from redis import Redis
 
-from rlgym.utils.obs_builders.advanced_obs import AdvancedObs
-from rlgym.utils.gamestates import PlayerData, GameState
-from rlgym.utils.reward_functions.default_reward import DefaultReward
-from rlgym.utils.action_parsers.discrete_act import DiscreteAction
+from rlgym_sim.utils.obs_builders.advanced_obs import AdvancedObs
+from rlgym_sim.utils.gamestates import PlayerData, GameState
+from rlgym_sim.utils.reward_functions.default_reward import DefaultReward
+from rlgym_sim.utils.action_parsers.discrete_act import DiscreteAction
 
 from rocket_learn.agent.actor_critic_agent import ActorCriticAgent
 from rocket_learn.agent.discrete_policy import DiscretePolicy

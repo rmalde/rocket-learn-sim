@@ -1,3 +1,23 @@
+# Forked Changes
+
+Adapted original rocket-learn library to use [rlgym_sim](https://github.com/AechPro/rocket-league-gym-sim/), so that we can run on Ubuntu/the cloud, without need for a working Rocket League installation on windows. 
+
+## Setup
+Follow normal setup below, like setting up a redis server
+Fill in .env file with WANDB_API_KEY, WANDB_USERNAME, WANDB_PROJECT, and REDIS_PASSWORD 
+
+## Usage
+Start the learner and the workers
+```
+python -m examples.default.learner
+```
+```
+python -m examples.default.launch_workers
+```
+
+# Original readme:
+
+
 # rocket-learn
 
 ## What is rocket-learn?

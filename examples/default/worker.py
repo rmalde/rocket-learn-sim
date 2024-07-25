@@ -3,16 +3,21 @@ import numpy
 
 from redis import Redis
 
-from rlgym.envs import Match
-from rlgym.utils.gamestates import PlayerData, GameState
-from rlgym.utils.terminal_conditions.common_conditions import GoalScoredCondition, TimeoutCondition
-from rlgym.utils.reward_functions.default_reward import DefaultReward
-from rlgym.utils.state_setters.default_state import DefaultState
-from rlgym.utils.obs_builders.advanced_obs import AdvancedObs
-from rlgym.utils.action_parsers.discrete_act import DiscreteAction
+from rlgym_sim.envs import Match
+from rlgym_sim.utils.gamestates import PlayerData, GameState
+from rlgym_sim.utils.terminal_conditions.common_conditions import GoalScoredCondition, TimeoutCondition
+from rlgym_sim.utils.reward_functions.default_reward import DefaultReward
+from rlgym_sim.utils.state_setters.default_state import DefaultState
+from rlgym_sim.utils.obs_builders.advanced_obs import AdvancedObs
+from rlgym_sim.utils.action_parsers.discrete_act import DiscreteAction
 
 from rocket_learn.rollout_generator.redis.redis_rollout_worker import RedisRolloutWorker
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+REDIS_PASSWORD = os.environ["REDIS_PASSWORD"]
 
 # ROCKET-LEARN ALWAYS EXPECTS A BATCH DIMENSION IN THE BUILT OBSERVATION
 class ExpandAdvancedObs(AdvancedObs):
@@ -39,20 +44,20 @@ if __name__ == "__main__":
     # BUILD THE ROCKET LEAGUE MATCH THAT WILL USED FOR TRAINING
     # -ENSURE OBSERVATION, REWARD, AND ACTION CHOICES ARE THE SAME IN THE WORKER
     match = Match(
-        game_speed=100,
-        spawn_opponents=True,
-        team_size=1,
-        state_setter=DefaultState(),
-        obs_builder=ExpandAdvancedObs(),
-        action_parser=DiscreteAction(),
+        reward_function=DefaultReward(),
         terminal_conditions=[TimeoutCondition(round(2000)),
                              GoalScoredCondition()],
-        reward_function=DefaultReward()
+        obs_builder=ExpandAdvancedObs(),
+        action_parser=DiscreteAction(),
+        state_setter=DefaultState(),
+        team_size=1,
+        spawn_opponents=True,
     )
+    match._tick_skip = 8 # because rlgym_sim doesn't support tick_skip in the match class
 
     # LINK TO THE REDIS SERVER YOU SHOULD HAVE RUNNING (USE THE SAME PASSWORD YOU SET IN THE REDIS
     # CONFIG)
-    r = Redis(host="127.0.0.1", password="you_better_use_a_password")
+    r = Redis(host="127.0.0.1", password=REDIS_PASSWORD)
 
     # LAUNCH ROCKET LEAGUE AND BEGIN TRAINING
     # -past_version_prob SPECIFIES HOW OFTEN OLD VERSIONS WILL BE RANDOMLY SELECTED AND TRAINED AGAINST
@@ -66,4 +71,5 @@ if __name__ == "__main__":
                        send_gamestates=False,
                        force_paging=False,
                        auto_minimize=True,
-                       local_cache_name="example_model_database").run()
+                       local_cache_name="example_model_database",
+                       live_progress=False).run()

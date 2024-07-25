@@ -2,9 +2,9 @@ from typing import List
 
 import numpy as np
 import torch
-from rlgym.gym import Gym
-from rlgym.utils.reward_functions.common_rewards import ConstantReward
-from rlgym.utils.state_setters import DefaultState
+from rlgym_sim.gym import Gym
+from rlgym_sim.utils.reward_functions.common_rewards import ConstantReward
+from rlgym_sim.utils.state_setters import DefaultState
 from tqdm import tqdm
 
 from rocket_learn.agent.policy import Policy
@@ -25,11 +25,11 @@ def generate_episode(env: Gym, policies, evaluate=False, scoreboard=None, progre
         progress = None
 
     if evaluate:  # Change setup temporarily to play a normal game (approximately)
-        from rlgym_tools.extra_terminals.game_condition import GameCondition  # tools is an optional dependency
+        from rocket_learn.utils.game_condition import GameCondition
         terminals = env._match._terminal_conditions  # noqa
         reward = env._match._reward_fn  # noqa
         game_condition = GameCondition(tick_skip=env._match._tick_skip,  # noqa
-                                       seconds_per_goal_forfeit=10 * env._match._team_size,
+                                       seconds_per_goal_forfeit=10 * env._match.team_size,
                                        max_overtime_seconds=300,
                                        max_no_touch_seconds=60)
         env._match._terminal_conditions = [game_condition]  # noqa

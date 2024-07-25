@@ -9,9 +9,9 @@ import sqlite3 as sql
 
 import numpy as np
 from redis import Redis
-from rlgym.envs import Match
-from rlgym.gamelaunch import LaunchPreference
-from rlgym.gym import Gym
+from rlgym_sim.envs import Match
+# from rlgym_sim.gamelaunch import LaunchPreference
+from rlgym_sim.gym import Gym
 from tabulate import tabulate
 
 import rocket_learn.agent.policy
@@ -116,8 +116,9 @@ class RedisRolloutWorker:
         self.set_team_size = state_setter.set_team_size
         match._state_setter = state_setter
         self.match = match
-        self.env = Gym(match=self.match, pipe_id=os.getpid(), launch_preference=LaunchPreference.EPIC,
-                       use_injector=True, force_paging=force_paging, raise_on_crash=True, auto_minimize=auto_minimize)
+        # self.env = Gym(match=self.match, pipe_id=os.getpid(), launch_preference=LaunchPreference.EPIC,
+        #                use_injector=True, force_paging=force_paging, raise_on_crash=True, auto_minimize=auto_minimize)
+        self.env = Gym(match=self.match, copy_gamestate_every_step=True, dodge_deadzone=0.8, tick_skip=8, gravity=1, boost_consumption=1)
         self.total_steps_generated = 0
 
     def _get_opponent_ids(self, n_new, n_old, pretrained_choice):
@@ -328,7 +329,7 @@ class RedisRolloutWorker:
 
             if self.dynamic_gm:
                 blue, orange = self.select_gamemode(equal_likelihood=evaluate or self.streamer_mode)
-            elif self.match._spawn_opponents is False:
+            elif self.match.spawn_opponents is False:
                 blue = self.match.agents
                 orange = 0
             else:
@@ -374,7 +375,7 @@ class RedisRolloutWorker:
                                                                                             evaluate=False,
                                                                                             scoreboard=self.scoreboard,
                                                                                             progress=self.live_progress)
-
+    
                     if len(rollouts[0].observations) <= 1:  # Happens sometimes, unknown reason
                         print(" ** Rollout Generation Error: Restarting Generation ** ")
                         print()

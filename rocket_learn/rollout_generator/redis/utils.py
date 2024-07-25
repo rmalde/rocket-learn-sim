@@ -5,7 +5,7 @@ from typing import List, Optional, Union, Dict
 
 import numpy as np
 from redis import Redis
-from rlgym.utils.gamestates import GameState
+from rlgym_sim.utils.gamestates import GameState
 from trueskill import Rating
 
 from rocket_learn.experience_buffer import ExperienceBuffer
@@ -206,3 +206,15 @@ def decode_buffers(enc_buffers, versions, has_obs, has_states, has_rewards,
                                  log_probs=log_probs[i])
             )
         return buffers, game_states
+
+
+def dump_redis(redis_client: Redis) -> None:
+    keys = redis_client.keys()
+    for k in keys:
+        try:
+            value = redis_client.get(k)
+            print(f"{k[:20]}: {value[:20]}")
+        except Exception as e:
+            print(f"Failed to dump {k}: {e}")
+
+    print(f"Total keys: {len(keys)}")

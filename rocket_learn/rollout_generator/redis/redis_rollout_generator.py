@@ -10,15 +10,15 @@ import wandb
 # from matplotlib.figure import Figure
 from redis import Redis
 from redis.exceptions import ResponseError
-from rlgym.utils import ObsBuilder, RewardFunction
-from rlgym.utils.action_parsers import ActionParser
+from rlgym_sim.utils import ObsBuilder, RewardFunction
+from rlgym_sim.utils.action_parsers import ActionParser
 from trueskill import Rating, rate, SIGMA
 
 from rocket_learn.experience_buffer import ExperienceBuffer
 from rocket_learn.rollout_generator.base_rollout_generator import BaseRolloutGenerator
 from rocket_learn.rollout_generator.redis.utils import decode_buffers, _unserialize, QUALITIES, _serialize, ROLLOUTS, \
     VERSION_LATEST, OPPONENT_MODELS, CONTRIBUTORS, N_UPDATES, MODEL_LATEST, _serialize_model, get_rating, \
-    _ALL, LATEST_RATING_ID, EXPERIENCE_PER_MODE
+    _ALL, LATEST_RATING_ID, EXPERIENCE_PER_MODE, dump_redis
 from rocket_learn.utils.stat_trackers.stat_tracker import StatTracker
 
 

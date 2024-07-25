@@ -3,15 +3,16 @@ import wandb
 import numpy
 from typing import Any
 
+
 import torch.jit
 from torch.nn import Linear, Sequential, ReLU
 
 from redis import Redis
 
-from rlgym.utils.obs_builders.advanced_obs import AdvancedObs
-from rlgym.utils.gamestates import PlayerData, GameState
-from rlgym.utils.reward_functions.default_reward import DefaultReward
-from rlgym.utils.action_parsers.discrete_act import DiscreteAction
+from rlgym_sim.utils.obs_builders.advanced_obs import AdvancedObs
+from rlgym_sim.utils.gamestates import PlayerData, GameState
+from rlgym_sim.utils.reward_functions.default_reward import DefaultReward
+from rlgym_sim.utils.action_parsers.discrete_act import DiscreteAction
 
 from rocket_learn.agent.actor_critic_agent import ActorCriticAgent
 from rocket_learn.agent.discrete_policy import DiscretePolicy
@@ -19,6 +20,15 @@ from rocket_learn.ppo import PPO
 from rocket_learn.rollout_generator.redis.redis_rollout_generator import RedisRolloutGenerator
 from rocket_learn.utils.util import SplitLayer
 
+# load dotenv
+from dotenv import load_dotenv
+
+load_dotenv()
+
+WANDB_API_KEY = os.environ["WANDB_API_KEY"]
+WANDB_USERNAME = os.environ["WANDB_USERNAME"]
+WANDB_PROJECT = os.environ["WANDB_PROJECT"]
+REDIS_PASSWORD = os.environ["REDIS_PASSWORD"]
 
 # ROCKET-LEARN ALWAYS EXPECTS A BATCH DIMENSION IN THE BUILT OBSERVATION
 class ExpandAdvancedObs(AdvancedObs):
@@ -37,13 +47,13 @@ if __name__ == "__main__":
 
     # ROCKET-LEARN USES WANDB WHICH REQUIRES A LOGIN TO USE. YOU CAN SET AN ENVIRONMENTAL VARIABLE
     # OR HARDCODE IT IF YOU ARE NOT SHARING YOUR SOURCE FILES
-    wandb.login(key=os.environ["WANDB_KEY"])
-    logger = wandb.init(project="demo", entity="wandb_username")
+    wandb.login(key=WANDB_API_KEY)
+    logger = wandb.init(project=WANDB_PROJECT, entity=WANDB_USERNAME)
     logger.name = "DEFAULT_LEARNER_EXAMPLE"
 
     # LINK TO THE REDIS SERVER YOU SHOULD HAVE RUNNING (USE THE SAME PASSWORD YOU SET IN THE REDIS
     # CONFIG)
-    redis = Redis(password="you_better_use_a_password")
+    redis = Redis(password=REDIS_PASSWORD)
 
     # ** ENSURE OBSERVATION, REWARD, AND ACTION CHOICES ARE THE SAME IN THE WORKER **
     def obs():

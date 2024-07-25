@@ -30,7 +30,7 @@ async def get_matchup(mode: int):
 
 @app.post("/rollout")
 async def rollout(obs_rew_probs: bytes, ):
-
+    pass
 
 
 class ApiRolloutGenerator(BaseRolloutGenerator):

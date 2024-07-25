@@ -5,6 +5,7 @@ import pstats
 import time
 import sys
 from typing import Iterator, List, Tuple, Union
+from tqdm.rich import tqdm
 
 import numba
 import numpy as np
@@ -157,15 +158,16 @@ class PPO:
             def _iter():
                 size = 0
                 print(f"Collecting rollouts ({iteration})...")
-                while size < self.n_steps:
-                    try:
-                        rollout = next(rollout_gen)
-                        if rollout.size() > 0:
-                            size += rollout.size()
-                            # progress.update(rollout.size())
-                            yield rollout
-                    except StopIteration:
-                        return
+                with tqdm(total=self.n_steps, desc="Progress", unit="step") as pbar:
+                    while size < self.n_steps:
+                        try:
+                            rollout = next(rollout_gen)
+                            if rollout.size() > 0:
+                                size += rollout.size()
+                                pbar.update(rollout.size())
+                                yield rollout
+                        except StopIteration:
+                            return
 
             self.calculate(_iter(), iteration)
             iteration += 1
