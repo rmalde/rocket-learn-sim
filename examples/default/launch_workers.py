@@ -2,6 +2,7 @@ import subprocess
 import sys
 from tqdm.rich import tqdm
 import time
+import argparse
 
 def launch_workers(num_workers):
     processes = []
@@ -26,4 +27,20 @@ def launch_workers(num_workers):
         sys.exit(0)
 
 if __name__ == "__main__":
-    launch_workers(20)
+    # Create the argument parser
+    parser = argparse.ArgumentParser(description="Launch multiple worker processes.")
+
+    # Add num_workers argument with default value of 16
+    parser.add_argument(
+        "--num_workers",
+        type=int,
+        default=16,
+        help="Number of worker processes to launch (default: 16)"
+    )
+
+    # Parse command-line arguments
+    args = parser.parse_args()
+
+    # Launch workers with the specified or default number of workers
+    launch_workers(args.num_workers)
+    # For me, optimal is around 28 with 64vcpus, getting 46ksps

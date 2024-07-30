@@ -406,7 +406,8 @@ class RedisRolloutWorker:
                     print(post_stats)
                     print()
 
-            if not self.streamer_mode:
+            # if not self.streamer_mode: This should run regarldess
+            if True:
                 rollout_data = encode_buffers(rollouts,
                                               return_obs=self.send_obs,
                                               return_states=self.send_gamestates,

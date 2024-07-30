@@ -4,7 +4,21 @@ Adapted original rocket-learn library to use [rlgym_sim](https://github.com/Aech
 
 ## Setup
 Follow normal setup below, like setting up a redis server
-Fill in .env file with WANDB_API_KEY, WANDB_USERNAME, WANDB_PROJECT, and REDIS_PASSWORD 
+Fill in .env file with
+```
+WANDB_API_KEY=
+WANDB_USERNAME=
+WANDB_PROJECT=
+REDIS_PASSWORD=
+```
+Then pip install necessary packages
+
+``` 
+pip install -e .
+pip install git+https://github.com/AechPro/rocket-league-gym-sim@main
+```
+Build and run the [Asset Dumper](https://github.com/ZealanL/RLArenaCollisionDumper), and put the collision_meshes folder in the top level directory
+
 
 ## Usage
 Start the learner and the workers
@@ -12,7 +26,7 @@ Start the learner and the workers
 python -m examples.default.learner
 ```
 ```
-python -m examples.default.launch_workers
+python -m examples.default.launch_workers --num_workers=16
 ```
 
 # Original readme:
